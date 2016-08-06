@@ -1,4 +1,4 @@
-job-manager
+Transit Hub
 ===========
 
 Distributed Job Manager for node using a datastore for persistence, modeled after quartz scheduler
