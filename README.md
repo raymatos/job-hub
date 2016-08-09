@@ -151,3 +151,18 @@ db.table("jobs").getAllRows().then((rows)=>{
 })
 
 ```
+
+Workflow
+------------------------------
+
+onStart -> Check DB for Changes
+  No changes -> Start node check in process -> setup triggers in memory -> Update next and previous trigger times
+  Changes -> Update db with no jobs/triggers -> Start node check in process -> setup triggers in memory  -> Update next and previous trigger times
+  
+onTriggerExcute -> Read data from previous job run -> run excutor -> Update DB (last run, next run, data, starttime, endtime)
+
+onAppExit -> Kill all triggers
+
+
+  
+
