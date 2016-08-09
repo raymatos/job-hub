@@ -105,3 +105,49 @@ e.g.:
   //run after someEventName is called, but the current time is within today and tomorrow.
 
 ```
+
+Database adapters
+------------------------------
+
+```
+config = {
+  host
+  port
+  database - used for mysql/postgres
+  schema - used for postgres
+  username
+  password
+}
+
+{
+   private - getConnection(config) - returns connection or error
+   createTable(name, columns(json)) -> returns table or error 
+   deleteTable(name) -> returns true or error
+   table(name) -> instance of table with helper mehtods
+    - insert(data(json)) -> insert json data into table or if ID exist update
+    - get(id) -> return json data of row
+    - getAllRows(limit,offset) -> return all rows, limit and offset 
+    - delete(id) -> delete a row
+}
+
+
+Since couchdb/mongoDB/nosql dont really have a concept for tables, it will instead create a new DB as a table.
+
+Sample usage
+
+let db = new dbApdater(config);
+
+db.createTable("jobs", {
+  name: "string"
+  description: "string"
+  ...
+  stateful: bool
+})
+
+db.deleteTable("jobs")
+
+db.table("jobs").getAllRows().then((rows)=>{
+  console.log(rows)
+})
+
+```
