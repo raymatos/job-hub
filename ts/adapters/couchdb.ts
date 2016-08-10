@@ -1,92 +1,63 @@
+import { IConfig, IDatabaseTable, IDatabase } from "./adapterInterfaces";
 
+class Table {
 
+    constructor(private conn: any, private tableName: string) {
+    }
 
+    insert(data: Object): Promise<string> {
+        let p = new Promise<string>(function(resolve, reject) {
+            resolve(`insert {data}`);
+        });
+        return p;
+    }
 
-export interface IConfig {
-  host: String;
-  port: Number;
-  database?: String;
-  schema?: String;
-  username: String;
-  password: String;
+    get(id: number): Promise<string> {
+        let p = new Promise<string>(function(resolve, reject) {
+            resolve(`get ${id}`);
+        });
+        return p;
+    }
+
+    getAllRows(limit: number, offset: number): Promise<string> {
+        let p = new Promise<string>(function(resolve, reject) {
+            resolve(`getAllRows ${limit} ${offset}`);
+        });
+        return p;
+    }
+
+    delete(id: number): Promise<string> {
+        let p = new Promise<string>(function(resolve, reject) {
+            resolve(`delete ${id}`);
+        });
+        return p;
+    }
 }
 
-export interface IDatabaseObject {
-  createTable(name:String, columns:Object): Promise<String>;
-  deleteTable(name: string): Promise<String>;
-  table(name: string): IDatabaseTableObject;
+export default class Database implements IDatabase {
+    private conn: any;
+
+    constructor(config: IConfig) {
+        this.conn = `foo`
+    }
+
+    createTable(name: string, columns: {}): Promise<string> {
+        if (name === "name") {
+            return Promise.resolve(`create ${name} ${columns}`)
+        } else {
+            return Promise.reject(`create ${name} ${columns}`)
+        }
+
+    }
+
+    deleteTable(name: string): Promise<string> {
+        let p = new Promise<string>(function(resolve, reject) {
+            resolve(`deleted ${name}`);
+        });
+        return p;
+    }
+
+    table(tableName: string): IDatabaseTable {
+        return new Table(this.conn, tableName)
+    }
 }
-
-export interface IDatabaseTableObject {
-  insert(data: Object): Promise<String>;
-  get(id: Number): Promise<String>;
-  getAllRows(limit: Number, offset: Number): Promise<String>;
-  delete(id: Number): Promise<String>;
-}
-
-export class Database implements IDatabaseObject {
-  conn: any;
-
-  constructor(config: IConfig){
-    this.conn = `foo`
-  }
-
-  createTable(name, columns){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`create ${name} ${columns}`);
-    });
-    return p;
-  }
-
-  deleteTable(name){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`deleted ${name}`);
-    });
-    return p;
-  }
-
-  table(tableName) {
-    return new Table(this.conn, tableName)
-  }
-}
-
-export class Table implements IDatabaseTableObject {
-  conn: any;
-  tableName: String;
-
-  constructor(conn:any, tableName: String){
-    this.conn = conn;
-    this.tableName = tableName;
-  }
-
-  insert(data){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`insert {data}`);
-    });
-    return p;
-  }
-
-  get(id){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`get ${id}`);
-    });
-    return p;
-  }
-
-  getAllRows(limit, offset){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`getAllRows ${limit} ${offset}`);
-    });
-    return p;
-  }
-
-  delete(id){
-    let p = new Promise<string>(function (resolve, reject) {
-        resolve(`delete ${id}`);
-    });
-    return p;
-  }
-}
-
-
-export default {Database};
