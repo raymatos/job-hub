@@ -1,63 +1,56 @@
-import { IConfig, IDatabaseTable, IDatabase } from "./adapterInterfaces";
+import { IDbConfig, IDatabaseTable, IDatabase } from "./adapterInterfaces";
+import * as PouchDB from "pouchdb"
+
 
 class Table {
 
-    constructor(private conn: any, private tableName: string) {
+    constructor(private conn: any) {
     }
 
     insert(data: Object): Promise<string> {
-        let p = new Promise<string>(function(resolve, reject) {
-            resolve(`insert {data}`);
-        });
-        return p;
+      return this.conn.put(data)
     }
 
     get(id: number): Promise<string> {
-        let p = new Promise<string>(function(resolve, reject) {
-            resolve(`get ${id}`);
-        });
-        return p;
+        return this.conn.get(id)
     }
 
     getAllRows(limit: number, offset: number): Promise<string> {
-        let p = new Promise<string>(function(resolve, reject) {
-            resolve(`getAllRows ${limit} ${offset}`);
-        });
-        return p;
+        return this.conn.allDocs({
+            include_docs:true,
+            limit: limit,
+            skip: offset
+        })
     }
 
     delete(id: number): Promise<string> {
-        let p = new Promise<string>(function(resolve, reject) {
-            resolve(`delete ${id}`);
-        });
-        return p;
+        return this.conn.remove(id)
     }
 }
 
 export default class Database implements IDatabase {
     private conn: any;
+    private tables: Array<string>;
 
-    constructor(config: IConfig) {
-        this.conn = `foo`
+    constructor(config: IDbConfig) {
+        this.conn = `http://${config.username}:${config.password}@${config.host}:${config.port}`
     }
 
     createTable(name: string, columns: {}): Promise<string> {
         if (name === "name") {
-            return Promise.resolve(`create ${name} ${columns}`)
+            this.tables[name] = new PouchDB(`${this.conn}/${name}`)
+            return this.tables[name];
         } else {
-            return Promise.reject(`create ${name} ${columns}`)
+            return Promise.reject(`A name must be provided`)
         }
 
     }
 
     deleteTable(name: string): Promise<string> {
-        let p = new Promise<string>(function(resolve, reject) {
-            resolve(`deleted ${name}`);
-        });
-        return p;
+      return this.tables[name].destory();
     }
 
-    table(tableName: string): IDatabaseTable {
-        return new Table(this.conn, tableName)
+    table(name: string): IDatabaseTable {
+        return new Table(this.tables[name])
     }
 }

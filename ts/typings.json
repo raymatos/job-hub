@@ -1,6 +1,7 @@
 {
   "globalDependencies": {
-    "node": "registry:env/node#6.0.0+20160723033700"
+    "node": "registry:env/node#6.0.0+20160723033700",
+    "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500"
   },
   "dependencies": {
     "es6-promise": "registry:npm/es6-promise#3.0.0+20160723033700"
